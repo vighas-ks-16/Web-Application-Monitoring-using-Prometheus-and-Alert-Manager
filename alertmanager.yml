@@ -1,0 +1,22 @@
+global:
+  smtp_smarthost: 'smtp.gmail.com:587'
+  smtp_auth_username: 'vighasks@gmail.com'
+  smtp_auth_password: '' # Ensure this is an application-specific password
+  smtp_auth_identity: 'vighasks@gmail.com'
+
+route:
+  group_by: ['severity','team'] #grouping the alerts by severity and team
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 5m
+  receiver: 'email'
+
+receivers:
+  - name: 'email'
+    email_configs:
+      - to: "vighasks@gmail.com"
+        from: 'Monitoring@example.com'
+        send_resolved: true
+        headers:
+          subject: '{{ .GroupLabels.team }} team  has alerts with severity {{ .GroupLabels.severity }}'
+        text: '{{ range .Alerts }}{{ .Annotations.info }}{{ "\n" }}{{ end }}'
